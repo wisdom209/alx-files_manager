@@ -26,11 +26,6 @@ class DBClient {
 		return this.connected
 	}
 
-	userCollection = () => {
-		const db = this.client.db(this.database)
-		return db.collections('users')
-	}
-
 	nbUsers = async () => {
 		try {
 			const db = this.client.db(this.database)
