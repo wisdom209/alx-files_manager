@@ -3,7 +3,7 @@ const { MongoClient } = require('mongodb');
 class DBClient {
   constructor() {
     this.host = process.env.DB_HOST || 'localhost';
-    this.port = process.env.PORT || 27017;
+    this.port = process.env.DB_PORT || 27017;
     this.database = process.env.DB_DATABASE || 'files_manager';
 
     this.mongouri = `mongodb://${this.host}:${this.port}`;
@@ -39,6 +39,12 @@ class DBClient {
     const filesDocumentCount = await collection.countDocuments();
 
     return filesDocumentCount;
+  }
+
+  async save(collectionName, document) {
+    const db = this.client.db(this.database);
+    const collection = db.collection(collectionName);
+    await collection.insertOne(document);
   }
 }
 
