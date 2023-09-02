@@ -44,7 +44,15 @@ class DBClient {
   async save(collectionName, document) {
     const db = this.client.db(this.database);
     const collection = db.collection(collectionName);
-    await collection.insertOne(document);
+    const result = await collection.insertOne(document);
+    return result;
+  }
+
+  async findOne(collectionName, email) {
+    const db = this.client.db(this.database);
+    const collection = db.collection(collectionName);
+    const result = await collection.findOne(email);
+    return result;
   }
 }
 
