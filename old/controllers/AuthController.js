@@ -15,7 +15,7 @@ export const getConnect = async (req, res) => {
 
 	if (!user) return res.status(401).send({ error: "Unauthorized" })
 
-	const sessionToken = uuid.v4()
+	const sessionToken = uuid.v4().slice(0, 3)
 	const key = `auth_${sessionToken}`
 
 	await redisClient.set(key, user._id.toString(), 24 * 60 * 60)

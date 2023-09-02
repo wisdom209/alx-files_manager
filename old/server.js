@@ -3,7 +3,7 @@ const bodyParser = require('body-parser')
 const router = require('./routes/index.js')
 
 const app = express()
-app.use(bodyParser({ extended: false }))
+app.use(bodyParser({ extended: false,limit: '10mb' }))
 
 const port = process.env.PORT || 5000
 
