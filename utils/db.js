@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb')
+const { MongoClient, ObjectId } = require('mongodb')
 const crypto = require('crypto')
 
 class DBClient {
@@ -53,6 +53,28 @@ class DBClient {
 			const db = this.client.db(this.database)
 			const collections = db.collection(collection)
 			const value = await collections.findOne(entity)
+			return value
+		} catch (e) {
+			console.log(e)
+		}
+	}
+	
+	findById = async (collection, documentId) => {
+		try {
+			const db = this.client.db(this.database)
+			const collections = db.collection(collection)
+			const value = await collections.findOne({_id: new ObjectId(documentId)})
+			return value
+		} catch (e) {
+			console.log(e)
+		}
+	}
+	
+	findAllWithId = async (collection, key, documentId) => {
+		try {
+			const db = this.client.db(this.database)
+			const collections = db.collection(collection)
+			const value = await collections.find({[key]: new ObjectId(documentId)}).toArray()
 			return value
 		} catch (e) {
 			console.log(e)
