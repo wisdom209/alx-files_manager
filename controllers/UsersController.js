@@ -1,5 +1,6 @@
 const dbClient = require('../utils/db');
 const sha1Hash = require('../utils/sha1');
+const { getUserBySessionToken } = require('./AuthController');
 
 async function postNew(req, res) {
   const { email } = req.body;
@@ -22,4 +23,14 @@ async function postNew(req, res) {
   return res.status(201).send(returnUser);
 }
 
-module.exports = { postNew };
+const getMe = async (req, res) => {
+  const sessionToken = req.headers['x-token'];
+
+  const user = await getUserBySessionToken(sessionToken);
+
+  if (!user) return res.status(401).send({ error: 'Unauthorized' });
+
+  return res.status(200).send({ id: user._id, email: user.email });
+};
+
+module.exports = { postNew, getMe };

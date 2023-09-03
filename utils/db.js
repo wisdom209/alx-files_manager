@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 
 class DBClient {
   constructor() {
@@ -48,10 +48,22 @@ class DBClient {
     return result;
   }
 
-  async findOne(collectionName, email) {
+  async findOne(collectionName, documentDetail) {
     const db = this.client.db(this.database);
     const collection = db.collection(collectionName);
-    const result = await collection.findOne(email);
+    const result = await collection.findOne(documentDetail);
+    return result;
+  }
+
+  async findById(collectionName, docId, key = '_id') {
+    const db = this.client.db(this.database);
+    const collection = db.collection(collectionName);
+    let result = '';
+    if (key === '_id') {
+      result = await collection.findOne({ _id: ObjectId(docId) });
+    } else {
+      result = await collection.find({ [key]: ObjectId(docId) }).toArray();
+    }
     return result;
   }
 }
