@@ -27,7 +27,7 @@ const getConnect = async (req, res) => {
 
   if (!user) return res.status(401).send({ error: 'Unauthorized' });
 
-  const sessionToken = uuid.v4().slice(0, 3);
+  const sessionToken = uuid.v4();
 
   const sessionKey = `auth_${sessionToken}`;
 
