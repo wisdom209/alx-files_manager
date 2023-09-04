@@ -34,7 +34,7 @@ export const getMe = async (req, res) => {
 
 
 export const getUserBySessionId = async (req, res) => {
-	const sessionToken = req.headers['x-token']
+	const sessionToken = req.header('X-Token')
 
 	if (!sessionToken) return null
 

@@ -39,7 +39,7 @@ const getConnect = async (req, res) => {
 };
 
 const getDisconnect = async (req, res) => {
-  const sessionToken = req.headers['x-token'];
+  const sessionToken = req.header('X-Token');
 
   const user = await getUserBySessionToken(sessionToken);
 

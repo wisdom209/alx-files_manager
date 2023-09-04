@@ -24,7 +24,7 @@ async function postNew(req, res) {
 }
 
 const getMe = async (req, res) => {
-  const sessionToken = req.headers['x-token'];
+  const sessionToken = req.header('X-Token');
 
   const user = await getUserBySessionToken(sessionToken);
 

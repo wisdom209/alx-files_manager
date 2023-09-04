@@ -20,13 +20,13 @@ export const getConnect = async (req, res) => {
 
 	await redisClient.set(key, user._id.toString(), 24 * 60 * 60)
 
-	res.setHeader('x-token', key)
+	res.setHeader('X-Token', key)
 
 	res.send({ token: `${sessionToken}` })
 }
 
 export const getDisconnect = async (req, res) => {
-	const sessionKey = req.headers['x-token']
+	const sessionKey = req.header('X-Token')
 
 	const userId = await redisClient.get(`auth_${sessionKey}`)
 
