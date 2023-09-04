@@ -4,7 +4,7 @@ const router = require('./routes/index');
 const app = express();
 const port = parseInt(process.env.PORT, 10) || 5000;
 
-app.use(express.json());
+app.use(express.json({ limit: '2mb' }));
 app.use(router);
 
 app.listen(port, 'localhost', () => {

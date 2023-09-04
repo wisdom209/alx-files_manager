@@ -56,15 +56,20 @@ class DBClient {
   }
 
   async findById(collectionName, docId, key = '_id') {
-    const db = this.client.db(this.database);
-    const collection = db.collection(collectionName);
-    let result = '';
-    if (key === '_id') {
-      result = await collection.findOne({ _id: ObjectId(docId) });
-    } else {
-      result = await collection.find({ [key]: ObjectId(docId) }).toArray();
+    try {
+      const db = this.client.db(this.database);
+      const collection = db.collection(collectionName);
+      let result = '';
+      if (key === '_id') {
+        result = await collection.findOne({ _id: ObjectId(docId) });
+      } else {
+        result = await collection.find({ [key]: ObjectId(docId) }).toArray();
+      }
+      return result;
+    } catch (e) {
+      console.log(e.message);
     }
-    return result;
+    return null;
   }
 }
 
