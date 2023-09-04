@@ -13,7 +13,7 @@ async function postNew(req, res) {
   if (emailExists) return res.status(400).send({ error: 'Already exist' });
 
   const hashedPasswd = sha1Hash(password);
-  const user = await dbClient.save('users', { email, hashedPasswd });
+  const user = await dbClient.save('users', { email, password: hashedPasswd });
 
   const returnUser = {
     id: user.ops[0]._id,
