@@ -31,8 +31,6 @@ const postUpload = async (req, res) => {
     if (!file) return res.status(400).send({ error: 'Parent not found' });
 
     if (file.type !== 'folder') return res.status(400).send({ error: 'Parent is not a folder' });
-
-
   }
 
   if (type === 'folder') {
