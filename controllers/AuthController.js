@@ -35,8 +35,6 @@ const getConnect = async (req, res) => {
 
   await redisClient.set(sessionKey, user._id.toString(), expirationTime);
 
-  //res.setHeader('x-token', sessionToken);
-
   return res.status(200).send({ token: sessionToken });
 };
 
