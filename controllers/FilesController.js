@@ -1,5 +1,6 @@
 const uuid = require('uuid');
 const fs = require('fs');
+const { ObjectID } = require('mongodb');
 const dbClient = require('../utils/db');
 const { getUserBySessionToken } = require('./AuthController');
 
@@ -77,4 +78,52 @@ const postUpload = async (req, res) => {
   return res.status(201).send(returnDoc);
 };
 
-module.exports = { postUpload };
+const getShow = async (req, res) => {
+  const userToken = req.header('X-Token');
+  const user = await getUserBySessionToken(userToken);
+  const files = await dbClient.findById('files', user._id, 'userId');
+  const { id } = req.params;
+
+  if (!user) return res.status(401).send({ error: 'Unauthorized' });
+
+  let matchFound = false;
+
+  files.forEach((file) => {
+    if (String(file._id) === String(id)) {
+      matchFound = true;
+      res.status(200).send(file);
+    }
+  });
+
+  if (!matchFound) {
+    res.status(404).send({ error: 'Not found' });
+  }
+  return null;
+};
+
+const getIndex = async (req, res) => {
+  const userToken = req.header('X-Token');
+  const user = await getUserBySessionToken(userToken);
+  const parentId = req.query.parentId || 0;
+  const page = req.query.page || 1;
+  const startIndex = (page - 1) * 20;
+  const endIndex = startIndex + 20;
+
+  if (!user) return res.status(401).send({ error: 'Unauthorized' });
+
+  let files = null;
+  if (parentId === 0) {
+    files = await dbClient.find('files', { parentId, userId: user._id });
+  } else {
+    files = await dbClient.find('files', { parentId: ObjectID(parentId), userId: user._id });
+  }
+
+  if (files.length === 0) {
+    return res.status(200).send([]);
+  }
+  const documents = files.slice(startIndex, endIndex);
+  console.log(documents);
+  return res.status(200).send(documents);
+};
+
+module.exports = { postUpload, getShow, getIndex };

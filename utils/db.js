@@ -71,6 +71,13 @@ class DBClient {
     }
     return null;
   }
+
+  async find(collectionName, documentDetail) {
+    const db = this.client.db(this.database);
+    const collection = db.collection(collectionName);
+    const result = await collection.find(documentDetail).toArray();
+    return result;
+  }
 }
 
 const dbClient = new DBClient();
