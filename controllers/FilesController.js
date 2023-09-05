@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 const fs = require('fs');
-const { ObjectID } = require('mongodb');
+const { ObjectId } = require('mongodb');
 const dbClient = require('../utils/db');
 const { getUserBySessionToken } = require('./AuthController');
 
@@ -78,6 +78,7 @@ const postUpload = async (req, res) => {
   return res.status(201).send(returnDoc);
 };
 
+// files/:id
 const getShow = async (req, res) => {
   const userToken = req.header('X-Token');
   const user = await getUserBySessionToken(userToken);
@@ -96,11 +97,12 @@ const getShow = async (req, res) => {
   });
 
   if (!matchFound) {
-    res.status(404).send({ error: 'Not found' });
+    return res.status(404).send({ error: 'Not found' });
   }
   return null;
 };
 
+// /files
 const getIndex = async (req, res) => {
   const userToken = req.header('X-Token');
   const user = await getUserBySessionToken(userToken);
@@ -113,9 +115,9 @@ const getIndex = async (req, res) => {
 
   let files = null;
   if (parentId === 0) {
-    files = await dbClient.find('files', { parentId, userId: user._id });
+    files = await dbClient.find('files', { parentId, userId: ObjectId(user._id) });
   } else {
-    files = await dbClient.find('files', { parentId: ObjectID(parentId), userId: user._id });
+    files = await dbClient.find('files', { parentId: ObjectId(parentId), userId: ObjectId(user._id) });
   }
 
   if (files.length === 0) {
