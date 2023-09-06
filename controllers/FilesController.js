@@ -94,6 +94,7 @@ const getShow = async (req, res) => {
       matchFound = true;
       const returnDoc = { id: file._id, ...file };
       delete returnDoc._id;
+      delete returnDoc.localPath;
       res.status(200).send(returnDoc);
     }
   });
@@ -130,6 +131,7 @@ const getIndex = async (req, res) => {
   documents = documents.map((value) => {
     const newDoc = { id: value._id, ...value };
     delete newDoc._id;
+    delete newDoc.localPath;
     return newDoc;
   });
   return res.status(200).send(documents);
