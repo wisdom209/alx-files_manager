@@ -92,7 +92,9 @@ const getShow = async (req, res) => {
   files.forEach((file) => {
     if (String(file._id) === String(id)) {
       matchFound = true;
-      res.status(200).send(file);
+      const returnDoc = { id: file._id, ...file };
+      delete returnDoc._id;
+      res.status(200).send(returnDoc);
     }
   });
 
