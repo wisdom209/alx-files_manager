@@ -135,4 +135,50 @@ const getIndex = async (req, res) => {
   return res.status(200).send(documents);
 };
 
-module.exports = { postUpload, getShow, getIndex };
+const putPublish = async (req, res) => {
+  const sessionToken = req.header('X-Token');
+  const user = await getUserBySessionToken(sessionToken);
+  const fileId = req.params.id;
+
+  if (!user) return res.status(401).send({ error: 'Unauthorized' });
+
+  const file = await dbClient.findOne('files', { _id: ObjectId(fileId), userId: ObjectId(user._id) });
+
+  if (!file) return res.status(404).send({ error: 'Not found' });
+
+  let updatedFile = { ...file, isPublic: true };
+
+  await dbClient.updateOne('files', file, updatedFile);
+
+  const updatedId = updatedFile._id;
+  delete updatedFile._id;
+  delete updatedFile.localPath;
+  updatedFile = { id: updatedId, ...updatedFile };
+  return res.status(200).send(updatedFile);
+};
+
+const putUnpublish = async (req, res) => {
+  const sessionToken = req.header('X-Token');
+  const user = await getUserBySessionToken(sessionToken);
+  const fileId = req.params.id;
+
+  if (!user) return res.status(401).send({ error: 'Unauthorized' });
+
+  const file = await dbClient.findOne('files', { _id: ObjectId(fileId), userId: ObjectId(user._id) });
+
+  if (!file) return res.status(404).send({ error: 'Not found' });
+
+  let updatedFile = { ...file, isPublic: false };
+
+  await dbClient.updateOne('files', file, updatedFile);
+
+  const updatedId = updatedFile._id;
+  delete updatedFile._id;
+  delete updatedFile.localPath;
+  updatedFile = { id: updatedId, ...updatedFile };
+  return res.status(200).send(updatedFile);
+};
+
+module.exports = {
+  postUpload, getShow, getIndex, putPublish, putUnpublish,
+};

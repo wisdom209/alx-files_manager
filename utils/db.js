@@ -52,6 +52,7 @@ class DBClient {
     const db = this.client.db(this.database);
     const collection = db.collection(collectionName);
     const result = await collection.findOne(documentDetail);
+    console.log(result);
     return result;
   }
 
@@ -76,6 +77,16 @@ class DBClient {
     const db = this.client.db(this.database);
     const collection = db.collection(collectionName);
     const result = await collection.find(documentDetail).toArray();
+    return result;
+  }
+
+  async updateOne(collectionName, docFilter, documentDetail) {
+    const db = this.client.db(this.database);
+    const collection = db.collection(collectionName);
+
+    const update = { $set: documentDetail };
+    const result = await collection.updateOne(docFilter, update);
+    console.log(result);
     return result;
   }
 }
