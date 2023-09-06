@@ -123,8 +123,13 @@ const getIndex = async (req, res) => {
   if (files.length === 0) {
     return res.status(200).send([]);
   }
-  const documents = files.slice(startIndex, endIndex);
-  console.log(documents);
+  let documents = files.slice(startIndex, endIndex);
+
+  documents = documents.map((value) => {
+    const newDoc = { id: value._id, ...value };
+    delete newDoc._id;
+    return newDoc;
+  });
   return res.status(200).send(documents);
 };
 
