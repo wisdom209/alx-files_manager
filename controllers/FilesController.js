@@ -1,6 +1,7 @@
 const uuid = require('uuid');
 const fs = require('fs');
 const { ObjectId } = require('mongodb');
+const mimetype = require('mime-types');
 const dbClient = require('../utils/db');
 const { getUserBySessionToken } = require('./AuthController');
 
@@ -84,10 +85,9 @@ const getShow = async (req, res) => {
   const user = await getUserBySessionToken(userToken);
 
   if (!user) return res.status(401).send({ error: 'Unauthorized' });
-  
+
   const files = await dbClient.findById('files', user._id, 'userId');
   const { id } = req.params;
-
 
   let matchFound = false;
 
@@ -183,6 +183,35 @@ const putUnpublish = async (req, res) => {
   return res.status(200).send(updatedFile);
 };
 
+// /files/:id/data
+const getFile = async (req, res) => {
+  const fileId = req.params.id;
+
+  const file = await dbClient.findOne('files', { _id: ObjectId(fileId) });
+
+  if (!file) return res.status(404).send({ error: 'Not found' });
+
+  const sessionToken = req.header('X-Token');
+
+  const user = await getUserBySessionToken(sessionToken);
+
+  if (!user) return res.status(404).send({ error: 'Not found' });
+
+  if (!file.isPublic && String(file.userId) !== String(user._id)) {
+    return res.status(404).send({ error: 'Not found' });
+  }
+  if (file.type === 'folder') return res.status(400).send({ error: 'A folder doesn\'t have content' });
+  if (!file.localPath) {
+    return res.status(400).send({ error: 'Not found' });
+  }
+
+  const fileMimeType = mimetype.contentType(file.localPath);
+
+  const fileContent = fs.readFileSync(fileMimeType, { encoding: 'utf8' });
+
+  return res.status(200).send(fileContent);
+};
+
 module.exports = {
-  postUpload, getShow, getIndex, putPublish, putUnpublish,
+  postUpload, getShow, getIndex, putPublish, putUnpublish, getFile,
 };
