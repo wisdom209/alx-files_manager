@@ -82,10 +82,12 @@ const postUpload = async (req, res) => {
 const getShow = async (req, res) => {
   const userToken = req.header('X-Token');
   const user = await getUserBySessionToken(userToken);
+
+  if (!user) return res.status(401).send({ error: 'Unauthorized' });
+  
   const files = await dbClient.findById('files', user._id, 'userId');
   const { id } = req.params;
 
-  if (!user) return res.status(401).send({ error: 'Unauthorized' });
 
   let matchFound = false;
 
